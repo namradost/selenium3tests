@@ -27,6 +27,9 @@ namespace csharp_example
             driver.FindElement(By.Name("password")).SendKeys("admin");
             driver.FindElement(By.Name("login")).Click();
             wait.Until(ExpectedConditions.TitleIs("My Store"));
+            driver.FindElement(By.LinkText("ACME Corp.")).Click();
+            driver.FindElement(By.Name("order_id")).SendKeys("2");
+            driver.FindElement(By.XPath("//*[@id=\"content\"]/div/form/button")).Click();
         }
 
         [TearDown]
