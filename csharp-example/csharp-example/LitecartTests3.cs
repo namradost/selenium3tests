@@ -27,27 +27,23 @@ namespace csharp_example
         {
             driver.Url = "http://localhost/litecart/en/";
             wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div#logotype-wrapper")));
-            List<IWebElement> productItemsForAssert = driver.FindElement(By.CssSelector("div#page")).FindElements(By.CssSelector(".image-wrapper")).ToList();
+            List<IWebElement> productItemsForAssert = driver.FindElement(By.CssSelector("div#page")).FindElements(By.CssSelector(".product")).ToList();
             int productsItemsCount = productItemsForAssert.Count;
 
+
+            int stickersResult = 0; 
             for (int i = 0; i <= productsItemsCount - 1; i++)
             {
-                productItemsForAssert = driver.FindElement(By.CssSelector("div#page")).FindElements(By.CssSelector(".image-wrapper")).ToList();
-                List<IWebElement> stikers = productItemsForAssert[i].FindElements(By.CssSelector("div.sticker")).ToList();               
-                int stikersCount = stikers.Count;
+                int stikersCount = productItemsForAssert[i].FindElements(By.CssSelector("div.sticker")).Count;
                 if (stikersCount == 1)
                 {
-                    //True: Item has 1 sticker
-                    driver.FindElement(By.Name("email")).SendKeys("+"); 
-                    //не знаю, куда выводить результаты, поэтому считала стикеры для уточек в поле Email
-                }
-                else
-                    //False: Incorrect result
-                     driver.FindElement(By.Name("email")).SendKeys("-");
+                    stickersResult++;
+                }                
             }
+            Assert.AreEqual(productsItemsCount, stickersResult);
         }
 
-        [TearDown]
+    [TearDown]
     public void stop()
     {
         driver.Quit();
