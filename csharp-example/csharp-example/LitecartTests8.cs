@@ -2,6 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -20,14 +21,14 @@ namespace csharp_example
         public void Start()
         {
             driver = new ChromeDriver();
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
         }
 
         [Test]
         public void WorkWithCart()
         {
-            driver.Url = "http://localhost/litecart/en/";
-            wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div#logotype-wrapper")));
+            driver.Url = "http://litecart.stqa.ru/en/";
+            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#logotype-wrapper")));
             AddProductInCart();
             DeleteFromCart();
 
@@ -67,22 +68,20 @@ namespace csharp_example
 
             for (int i = itemsCount; i > 1; i--)
             {
-               IWebElement el2 = driver.FindElement(By.CssSelector("#order_confirmation-wrapper tr:nth-child(3) td.item"));
-               string el2text = el2.GetAttribute("textContent");
+                IWebElement el1 = driver.FindElement(By.CssSelector("table tr:nth-child(2) td.item"));
+                string el1text = el1.GetAttribute("textContent");
 
-               driver.FindElement(By.CssSelector("li.shortcut")).Click();
-               wait.Until(ExpectedConditions.ElementExists(By.Name("remove_cart_item")));
-               driver.FindElement(By.Name("remove_cart_item")).Click();
+                wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("li.shortcut")));
+                driver.FindElement(By.CssSelector("li.shortcut")).Click();
+                driver.FindElement(By.Name("remove_cart_item")).Click();
 
-               IWebElement el1 = driver.FindElement(By.CssSelector("#order_confirmation-wrapper tr:nth-child(2) td.item"));
-               string el1text = el1.GetAttribute("textContent");
-
-                wait.Until(ExpectedConditions.TextToBePresentInElement(el1, $"{el2text}"));
-                }
-
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("table tr:nth-child(2) td.item")));
+                wait.Until(ExpectedConditions.InvisibilityOfElementWithText(By.CssSelector("table tr:nth-child(2) td.item"), $"{el1text}"));
+            }
             driver.FindElement(By.Name("remove_cart_item")).Click();
-            wait.Until(ExpectedConditions.ElementExists(By.CssSelector("#checkout-cart-wrapper p:nth-child(6) a")));
-            driver.FindElement(By.CssSelector("#checkout-cart-wrapper p:nth-child(6) a")).Click();          
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("#checkout-cart-wrapper a")));
+            Thread.Sleep(1000);
+            driver.FindElement(By.CssSelector("#checkout-cart-wrapper a")).Click();          
         }
 
         private void SelectSize(By locator2)
