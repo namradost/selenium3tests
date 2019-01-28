@@ -71,8 +71,6 @@ namespace csharp_example
                 IWebElement el1 = driver.FindElement(By.CssSelector("table tr:nth-child(2) td.item"));
                 string el1text = el1.GetAttribute("textContent");
 
-                wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("li.shortcut")));
-                driver.FindElement(By.CssSelector("li.shortcut")).Click();
                 driver.FindElement(By.Name("remove_cart_item")).Click();
 
                 wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("table tr:nth-child(2) td.item")));
